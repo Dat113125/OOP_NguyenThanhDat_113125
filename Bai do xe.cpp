@@ -1,586 +1,297 @@
 #include<iostream>
 #include<string>
-#include<cctype>
+
 using namespace std;
 
-class Vihecle{
-	private:
-		int vihecleID;
-		string vihecleType;
-		int entryTime;
-		int parkingDuration;
-		double parkingFee;
-		bool isOccupied;
-		
-		string chuanhoaten(string type){
-			string lower = type;
-			if(lower == "car") return "Car";
-			if(lower == "motorcycle") return "Motorcycle";
-			if(lower == "bicycle") return "Bicycle";
-			return type;
-		}
-		
-	public:
-		Vihecle(){
-			vihecleID = 0;
-			vihecleType = "";
-			entryTime = 0;
-			parkingDuration = 0;
-			parkingFee = 0.0;
-			isOccupied = false;
-		}
-		Vihecle(int vihecleID, string vihecleType, int entryTime, int parkingDuration){
-			this->vihecleID = vihecleID;
-			this->vihecleType = vihecleType;
-			this->entryTime = entryTime;
-			this->parkingDuration = parkingDuration;
-			isOccupied = true;
-			tinhphi();
-			
-		}
-		//Getter
-		int getVihecleID(){return vihecleID;}
-		string getvihecleType(){return vihecleType;}
-		int getentryTime(){return entryTime;}
-		int getparkingDuration(){return parkingDuration;}
-		double getparkingFee(){return parkingFee;}
-		bool getisOccupied(){return isOccupied;}
-		
-		//Setter
-		void setvihecleID(int id){ vihecleID = id;}
-		void setvihecleType(string type) { vihecleType = chuanhoaten(type);}
-		void setentryTime(int time){ entryTime = time;}
-		void setparkingDuration(int duration){parkingDuration = duration;}
-		void setisOccoupied(bool occupied){isOccupied = occupied;}
-		
-		void tinhphi(){
-		float phi2hdau, phisau;
-		if (vihecleType == "Car"){
-			if(parkingDuration <= 2 ){
-				if(entryTime == 6 || entryTime == 7 || entryTime == 8 || entryTime == 9 || entryTime == 15 || entryTime == 16 || entryTime == 17 || entryTime == 18){
-					phi2hdau = parkingDuration*(6+6*0.3);
-				}
-				else{
-					phi2hdau = parkingDuration*(6-6*0.05);
-				}
-			}
-			else{
-				phisau = parkingDuration*(6-6*0.1);
-			}
-		}
-		
-		if (vihecleType == "Motorcycle"){
-			if(parkingDuration <= 2 ){
-				if(entryTime == 6 || entryTime == 7 || entryTime == 8 || entryTime == 9 || entryTime == 15 || entryTime == 16 || entryTime == 17 || entryTime == 18){
-					phi2hdau = parkingDuration*(4+4*0.3);
-				}
-				else{
-					phi2hdau = parkingDuration*(4-4*0.05);
-				}
-			}
-			else{
-				phisau = parkingDuration*(4-4*0.1);
-			}
-		}
-		
-		if (vihecleType == "Bicycle"){
-			if(parkingDuration <= 2 ){
-				if(entryTime == 6 || entryTime == 7 || entryTime == 8 || entryTime == 9 || entryTime == 15 || entryTime == 16 || entryTime == 17 || entryTime == 18){
-					phi2hdau = parkingDuration*(2+2*0.3);
-				}
-				else{
-					phi2hdau = parkingDuration*(2-2*0.05);
-				}
-			}
-			else{
-				phisau = parkingDuration*(2-2*0.1);
-			}
-		}
-		float phidoxe = phi2hdau + phisau;
-		cout<<"Phi do xe: "<<phidoxe;
-	}
-	void hienthiVihecle(){
-		cout<<"Ma phuong tien"<<vihecleID<<endl;
-		cout<<"Loai phuong tien"<<vihecleType<<endl;
-		cout<<"Thoi gian vao"<<entryTime<<":00"<<endl;
-		cout<<"Thoi gian do xe"<<parkingDuration<<"gio"<<endl;
-		cout<<"Phi do xe:";
-		tinhphi();
-	}
+class phuong_tien {
+private:
+    int ma_xe;
+    string loai_xe;
+    int gio_vao;
+    int tg_do;
+
+public:
+    phuong_tien();
+    phuong_tien(int ma, string loai, int gio, int tg);
+
+    int lay_ma_xe() const;
+    string lay_loai_xe() const;
+    double tinh_phi() const;
+    void hien_thi() const;
 };
 
-class parkingLot{
-	private:
-		int parkID;
-		char size;
-		Vihecle Vihecle1, Vihecle2, Vihecle3;
-		bool hasVihecle1,  hasVihecle2, hasVihecle3;
-		bool isExist;
-	public:
-		parkingLot(){
-			parkID = -1;
-			size = 'S';
-			hasVihecle1 = false;
-			hasVihecle2 = false;
-			hasVihecle3 = false;
-			isExist = false;
-		}
-		parkingLot(int parkID, char size){
-			this->parkID = parkID;
-			this->size = toupper(size);
-			hasVihecle1 = true;
-			hasVihecle2 = true;
-			hasVihecle3 = true;
-			isExist = true;
-		}
-		
-		//Getter
-		int getparkID() const{return parkID;}
-		char getsize() const{return size;}
-		bool getisExist() const{return isExist;}
-		
-		//Setter
-		void setparkID(int id) { parkID = id;}
-		void setsize(char s){ size = s;}
-		void setisExist(bool exist){ isExist = exist;}
-		
-		bool addVihecle(const Vihecle& v){
-			if(!isExist) return false;
-			
-			if(!hasVihecle1){
-				Vihecle1 = v;
-				hasVihecle1 = true;
-				return true;
-			}
-			
-			if(size == 'M' || size == 'L'){
-				if(!hasVihecle2){
-					Vihecle2 = v;
-					hasVihecle2 = true;
-					return true;
-				}
-			}
-			
-			if(size == 'L'){
-				if(!hasVihecle3){
-					Vihecle3 = v;
-					hasVihecle3 = true;
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		bool removeVihecle(int vID){
-			if(hasVihecle1 && Vihecle1.getVihecleID() == vID){
-				hasVihecle1 = false;
-				Vihecle1 = Vihecle();
-				return true;
-			}
-			
-			if(hasVihecle2 && Vihecle2.getVihecleID() == vID){
-				hasVihecle2 = false;
-				Vihecle2 = Vihecle();
-				return true;
-			}
-			
-			if(hasVihecle3 && Vihecle3.getVihecleID() == vID){
-				hasVihecle3 = true;
-				Vihecle3 = Vihecle();
-				return true;
-			}
-			return false;
-		}
-		
-		bool coVihecleko(int vID){
-			return(hasVihecle1 && Vihecle1.getVihecleID() == vID || hasVihecle2 && Vihecle2.getVihecleID() == vID || hasVihecle3 && Vihecle3.getVihecleID() == vID);
-		}
-	
-		Vihecle layViheclequaID(int vID){
-			if(hasVihecle1 && Vihecle1.getVihecleID() == vID) return Vihecle1;
-			if(hasVihecle2 && Vihecle2.getVihecleID() == vID) return Vihecle2;
-			if(hasVihecle3 && Vihecle3.getVihecleID() == vID) return Vihecle3;
-			return Vihecle();
-		}
-		
-		int demVihecle(){
-			int count = 0;
-			if(hasVihecle1) count++;
-			if(hasVihecle2) count++;
-			if(hasVihecle3) count++;
-			return count;
-		}
-		
-		void hienthiLot(){
-			cout<<"ID bai do:"<<parkID<<endl;
-			cout<<"So xe hien tai:"<<demVihecle()<<endl;
-			cout<<"Size:"<<size<<endl;
-		}
-		
-		void hienthithongtinLot(){
-			hienthiLot();
-			if(demVihecle() == 0){
-				cout<<"Bai xe chua co xe nao"<<endl;
+phuong_tien::phuong_tien(){
+	ma_xe = 0;
+	loai_xe = "";
+	gio_vao = 0;
+	tg_do = 0;
+}
+
+phuong_tien::phuong_tien(int ma, string loai, int gio, int tg) const{
+	ma_xe = ma;
+	loai_xe = loai;
+	gio_vao = gio;
+	tg_do = tg;
+}
+
+void phuong_tien::lay_ma_xe() const{
+	return ma_xe;
+}
+
+string phuongtien::lay_loai_xe() const{
+	return loai_xe;
+}
+
+string chuanhoaten(string loai){
+		string lower = loai;
+		if(lower == "car") return "Car";
+		if(lower == "motorcycle") return "Motorcycle";
+		if(lower == "bicycle") return "Bicycle";
+		return loai;
+
+
+double phuong_tien::tinh_phi(tg_do){
+	float phi2hdau, phitiep;
+	if(loai_xe == "Car"){
+		if(tg_do <= 2){
+			if(giovao >= 6 && gio_vao <=9 || gio_vao >= 15 && gio_vao <= 18){
+				phi2hdau = tg_do*(6+6*0.3);
 			}
 			else{
-				if(hasVihecle1) Vihecle1.hienthiVihecle();
-				if(hasVihecle2) Vihecle2.hienthiVihecle();
-				if(hasVihecle3) Vihecle3.hienthiVihecle();
+				phi2hdau = tg_do*(6-6*0.05);
 			}
 		}
-		
-		void baocao(string type, double tongphi, int dem){
-			if(hasVihecle1 && Vihecle1.getvihecleType() == type){
-				tongphi += Vihecle1.getparkingFee();
-				dem++;
-			}
-			else if(hasVihecle2 && Vihecle2.getvihecleType() == type){
-				tongphi += Vihecle2.getparkingFee();
-				dem++;
-			}
-			else if(hasVihecle3 && Vihecle3.getvihecleType() == type){
-				tongphi += Vihecle3.getparkingFee();
-				dem++;
-			}
-		}
-		
-		void timtheoType(string type, bool found){
-			if(hasVihecle1 && Vihecle1.getvihecleType() == type){
-				cout<<"Tim thay tai bai co ID: "<<parkID<<endl;
-				Vihecle1.hienthiVihecle();
-				found = true;
-			}
-			
-			else if(hasVihecle2 && Vihecle2.getvihecleType() == type){
-				cout<<"Tim thay tai bai co ID: "<<parkID<<endl;
-				Vihecle2.hienthiVihecle();
-				found = true;
-			}
-			
-			else if(hasVihecle3 && Vihecle3.getvihecleType() == type){
-				cout<<"Tim thay tai bai co ID: "<<parkID<<endl;
-				Vihecle3.hienthiVihecle();
-				found = true;
-			}
-		}
-		
-		void xoaLot(){
-			parkID = -1;
-			size = 'S';
-			hasVihecle1 = false;
-			hasVihecle2 = false;
-			hasVihecle3 = false;
-			isExist = false;
-			Vihecle1 = Vihecle();
-			Vihecle2 = Vihecle();
-			Vihecle3 = Vihecle();
+		else{
+			phisau = (tg_do - 2) * (6-6*0.1);
 		}	
+	}
+	
+	if(loai_xe == "Motorcycle"){
+		if(tg_do <= 2){
+			if(giovao >= 6 && gio_vao <=9 || gio_vao >= 15 && gio_vao <= 18){
+				phi2hdau = tg_do*(4+4*0.3);
+			}
+			else{
+				phi2hdau = tg_do*(4-4*0.05);
+			}
+		}
+		else{
+			phisau = (tg_do - 2) * (4-4*0.1);
+		}	
+	}
+	
+	if(loai_xe == "Cycle"){
+		if(tg_do <= 2){
+			if(giovao >= 6 && gio_vao <=9 || gio_vao >= 15 && gio_vao <= 18){
+				phi2hdau = tg_do*(2+2*0.3);
+			}
+			else{
+				phi2hdau = tg_do*(2-2*0.05);
+			}
+		}
+		else{
+			phisau = (tg_do - 2) * (2-2*0.1);
+		}	
+	}
+	
+	return phi2hdau + phisau;
+}
+
+void phuong_tien::hien_thi(){
+	double phi = tinh_phi(tg_do)
+	cout<<"Ma phuong tien"<<ma_xe<<endl;
+	cout<<"Loai phuong tien"<<loai_xe<<endl;
+	cout<<"Gio vao"<<gio_vao<<endl;
+	cout<<"Thoi gian do xe"<<tg_do<<endl;
+	cout<<"Phi do xe"<<phi<<" VND"<<endl;
+}
+
+
+class bai_xe {
+private:
+    int ma_bai;
+    char kich_thuoc;
+    phuong_tien pt1, pt2, pt3;
+    bool co1, co2, co3;
+
+public:
+    bai_xe();
+    bai_xe(int ma, char kt);
+
+    int lay_ma() const;
+    bool them(phuong_tien v);
+    bool xoa(int ma_xe);
+    bool chua(int ma_xe) const;
+    void hien_thi() const;
+    bool co_loai(string loai, int& dem, double& tong) const;
 };
 
-class SystemInterface{
-	private:
-		parkingLot parkingLot1, parkingLot2, parkingLot3;
-		bool hasLot1, hasLot2, hasLot3;
-		
-		bool trunglapLot(int id){
-			if(hasLot1 && parkingLot1.getparkID() == id) return true;
-			if(hasLot2 && parkingLot2.getparkID() == id) return true;
-			if(hasLot3 && parkingLot3.getparkID() == id) return true;
-			return false;
-		}
-		
-		bool trunglapVihecle(int id){
-			if(hasLot1 && parkingLot1.coVihecleko(id) == id) return true;
-			if(hasLot2 && parkingLot2.coVihecleko(id) == id) return true;
-			if(hasLot3 && parkingLot3.coVihecleko(id) == id) return true;
-			return false;
-		}
-	public:
-		SystemInterface(){
-			hasLot1 = false;
-			hasLot2 = false;
-			hasLot3 = false;
-		}
-		void hienthimenu(){
-			int luachon;
-			do{
-				cout<<"1. Tao bai do xe moi"<<endl;
-				cout<<"2. Them xe vao bai do"<<endl;
-				cout<<"3. Xoa mot bai do xe"<<endl;
-				cout<<"4. Lay xe khoi bai"<<endl;
-				cout<<"5. Hien thi tat ca bai do xe"<<endl;
-				cout<<"6. Hien thi danh sach xe theo bai"<<endl;
-				cout<<"7. Liet ke xe theo loai"<<endl;
-				cout<<"8. Xem bao cao tom tat chi phi"<<endl;
-				cout<<"9. Thoat chuong trinh"<<endl;
-				cout<<"Moi ban nhap lua chon (1-9): ";
-				cin>>luachon;
-				
-				switch(luachon){
-					case 1:
-						taobaido();
-						break;
-					case 2:	
-						themxe();
-						break;
-					case 3:
-						xoabaido();
-						break;
-					case 4:
-						layxe();
-						break;
-					case 5:
-						hienthitatcaibaido();
-						break;
-					case 6:
-						hienthidanhsachxe();
-						break;
-					case 7:
-						lietke();
-						break;
-					case 8:
-						xembaocao();
-						break;
-					case 9:
-						cout << "Cam on ban da su dung he thong. Tam biet!"<<endl;
-						break;	
-				}
-			}while(luachon != 9);
-		}
-	private:
-		void taobaido(){
-			if(hasLot1 && hasLot2 && hasLot3){
-				cout<<"Da du so luong bai xe (toi da 3 bai)"<<endl;
-			}
-			int pID;
-			char size;
-			cout<<"Moi ban nhap ma bai do: ";
-			cin>>pID;
-			if(trunglapLot(pID)){
-				cout<<"Loi: Ma bai xe da ton tai"<<endl;
-				return;
-			}
-			cout<<"Moi ban nhap kich thuoc bai:";
-			cin>>size;
-			size = toupper(size);
-			if(size != 'S' || size != 'M' || size != 'L'){
-				cout<<"Loi: Ban da nhap sai dinh dang size bai"<<endl;
-				return;
-			}
-						
-			if(hasLot1 == false){
-				parkingLot1 = parkingLot(pID, size);
-				hasLot1 = true;
-			}
-			else if(hasLot2 == false){
-				parkingLot2 = parkingLot(pID, size);
-				hasLot2 = true;
-			}
-			else if(hasLot3 == false){
-				parkingLot3 = parkingLot(pID, size);
-				hasLot3 = true;
-			}
-						
-			cout<<"Tao bai xe thanh cong"<<endl;
-		}
-		
-		void themxe(){
-	        if (!hasLot1 && !hasLot2 && !hasLot3) {
-	            cout << "Chua co bai do xe nao trong he thong. Vui long tao bai truoc"<<endl;
-	            return;
-	        }
-	
-	        int vID, entryTime, duration;
-	        string vType;
-	
-	        cout << "Nhap ma xe: ";
-	        cin >> vID;
-	
-	        if (trunglapVihecle(vID)) {
-	            cout << "Loi: Ma xe da ton tai trong he thong!"<<endl;
-	            return;
-	        }
-	
-	        cout << "Nhap loai xe: ";
-	        cin >> vType;
-	
-	        cout << "Nhap gio vao bai (0 - 23): ";
-	        cin >> entryTime;
-	        if (entryTime < 0 || entryTime > 23) {
-	            cout << "Loi: Gio vao phai tu 0 den 23"<<endl;
-	            return;
-	        }
-	
-	        cout << "Nhap thoi luong do du kien (1 - 23 gio): ";
-	        cin >> duration;
-	        if (duration < 1 || duration > 23) {
-	            cout << "Loi: Thoi luong do phai tu 1 den 23"<<endl;
-	            return;
-	        }
-	
-	        Vihecle newVihecle = Vihecle(vID, vType, entryTime, duration);
-	        
-	        bool added = false;
-	        if (hasLot1 && parkingLot1.addVihecle(newVihecle)) {
-	            added = true;
-	            cout << "Them xe thanh cong vao Bai ID: " << parkingLot1.getparkID() <<endl;
-	        } else if (hasLot2 && parkingLot2.addVihecle(newVihecle)) {
-	            added = true;
-	            cout << "Them xe thanh cong vao Bai ID: " << parkingLot2.getparkID() <<endl;
-	        } else if (hasLot3 && parkingLot3.addVihecle(newVihecle)) {
-	            added = true;
-	            cout << "Them xe thanh cong vao Bai ID: " << parkingLot3.getparkID() <<endl;
-	        }
-	
-	        if (!added) {
-	            cout << "Loi: Tat ca cac bai do xe hien tai da day cho"<<endl;
-	        }
-	    }
-	    
-	    void xoabaido() {
-	        if (!hasLot1 && !hasLot2 && !hasLot3) {
-	            cout << "Khong co bai do xe nao trong he thong"<<endl;
-	            return;
-	        }
-	
-	        int pID;
-	        cout << "Nhap ma bai do can xoa: ";
-	        cin >> pID;
-	
-	        bool removed = false;
-	        if (hasLot1 && parkingLot1.getparkID() == pID) {
-	            if (parkingLot1.demVihecle() > 0) {
-	                cout << "Loi: Khong the xoa vi bai do van con xe ben trong"<<endl;
-	                return;
-	            }
-	            parkingLot1.xoaLot();
-	            hasLot1 = false;
-	            removed = true;
-	        } else if (hasLot2 && parkingLot2.getparkID() == pID) {
-	            if (parkingLot2.demVihecle() > 0) {
-	                cout << "Loi: Khong the xoa vi bai do van con xe ben trong"<<endl;
-	                return;
-	            }
-	            parkingLot2.xoaLot();
-	            hasLot2 = false;
-	            removed = true;
-	        } else if (hasLot3 && parkingLot3.getparkID() == pID) {
-	            if (parkingLot3.demVihecle() > 0) {
-	                cout << "Loi: Khong the xoa vi bai do van con xe ben trong"<<endl;
-	                return;
-	            }
-	            parkingLot3.xoaLot();
-	            hasLot3 = false;
-	            removed = true;
-	        }
-	
-	        if (removed) {
-	            cout << "Xoa bai do xe thanh cong"<<endl;
-	        } else {
-	            cout << "Loi: Không tim thay ma bai do nay"<<endl;
-	        }
-	    }
+bai_xe::bai_xe(){
+	ma_bai = 0;
+	kich_thuoc = "";
+	co1 = false;
+	co2 = false;
+	co3 = false;
+}
 
-	    void layxe() {
-	        int vID;
-	        cout << "Nhap ma xe can lay ra: ";
-	        cin >> vID;
-	
-	        bool removed = false;
-	        if (hasLot1 && parkingLot1.removeVihecle(vID)) {
-	            removed = true;
-	        } 
-			else if (hasLot2 && parkingLot2.removeVihecle(vID)) {
-	            removed = true;
-	        } 
-			else if (hasLot3 && parkingLot3.removeVihecle(vID)) {
-	            removed = true;
-	        }
-	
-	        if (removed) {
-	            cout << "Lay xe ra khoi bai do thanh cong"<<endl;
-	        } 
-			else {
-	            cout << "Loi: Không tim thay xe co ma nay trong he thong"<<endl;
-	        }
-	    }
-	    
-	    void hienthitatcaibaido() {
-	        if (!hasLot1 && !hasLot2 && !hasLot3) {
-	            std::cout << "He thong chua co bai do xe nao"<<endl;
-	            return;
-	        }
-	        cout <<"Danh sach sac bai do:"<<endl;
-	        if (hasLot1) parkingLot1.hienthiLot();
-	        if (hasLot2) parkingLot2.hienthiLot();
-	        if (hasLot3) parkingLot3.hienthiLot();
-    	}
-    	
-    	void hienthidanhsachxe(){
-	        if (!hasLot1 && !hasLot2 && !hasLot3) {
-	            cout << "He thong chua co bai do xe nao"<<endl;
-	            return;
-	        }
-	
-	        int pID;
-	        cout << "Nhap ma bai do: ";
-	        cin >> pID;
-	
-	        if (hasLot1 && parkingLot1.getparkID() == pID) {
-	            parkingLot1.hienthithongtinLot();
-	        } 
-			else if (hasLot2 && parkingLot2.getparkID() == pID) {
-	            parkingLot2.hienthithongtinLot();
-	        } 
-			else if (hasLot3 && parkingLot3.getparkID() == pID) {
-	            parkingLot3.hienthithongtinLot();
-	        } 
-			else {
-	            cout << "Loi: Khong tim thay bai do xe nay"<<endl;
-	        }
-    	}
-    	
-    	void lietke(){
-	        string type;
-	        cout << "Nhap loai xe can liet ke: ";
-	        cin >> type;
-	
-	        cout <<"Danh sach xe theo loai:"<< type <<endl;
-	        bool found = false;
-	        if (hasLot1) parkingLot1.timtheoType(type, found);
-	        if (hasLot2) parkingLot2.timtheoType(type, found);
-	        if (hasLot3) parkingLot3.timtheoType(type, found);
-	
-	        if (!found) {
-	            cout << "Khong tim thay xe nao thuoc loai nay trong he thong"<<endl;
-	        }
-    	}
-    	
-    	void xembaocao(){
-        cout << "Bao cao do xe: "<<endl;
-        
-        string types[3] = {"Car", "Motorcycle", "Bicycle"};
-        
-        for (int i = 0; i < 3; ++i) {
-            double totalFeeAll = 0.0;
-            int totalCountAll = 0;
+bai_xe::bai_xe(int ma, char kt){
+	ma = ma_bai;
+	kt = kich_thuoc;
+	co1 = false;
+	co2 = false;
+	co3 = false;
+}
 
-            if (hasLot1) parkingLot1.baocao(types[i], totalFeeAll, totalCountAll);
-            if (hasLot2) parkingLot2.baocao(types[i], totalFeeAll, totalCountAll);
-            if (hasLot3) parkingLot3.baocao(types[i], totalFeeAll, totalCountAll);
+int bai_xe::lay_ma() const{
+	return ma_xe;
+}
 
-            cout <<"Loai xe" << types[i] <<endl;
-            if (totalCountAll > 0) {
-                cout << "Phi trung binh toan he thong: VND" << (totalFeeAll / totalCountAll) <<endl;
-            } else {
-                cout << "Phi trung binh toan he thong: 0VND (Chua co du lieu)"<<endl;
-            }
-        }
+bool bai_xe::them(phuong_tien v) {
+    int cap = (kich_thuoc == 'S') ? 1 : (kich_thuoc == 'M') ? 2 : 3;
+    if (cap >= 1 && !co1) { pt1 = v; co1 = true; return true; }
+    if (cap >= 2 && !co2) { pt2 = v; co2 = true; return true; }
+    if (cap >= 3 && !co3) { pt3 = v; co3 = true; return true; }
+    return false;
+}
+
+
+bool bai_xe::xoa(int ma_xe) {
+    if (co1 && pt1.lay_ma_xe() == ma_xe) {
+        if (co2) {
+            pt1 = pt2;
+            if (co3) { pt2 = pt3; co3 = false; }
+            else co2 = false;
+        } else co1 = false;
+        return true;
     }
+    if (co2 && pt2.lay_ma_xe() == ma_xe) {
+        if (co3) { pt2 = pt3; co3 = false; }
+        else co2 = false;
+        return true;
+    }
+    if (co3 && pt3.lay_ma_xe() == ma_xe) {
+        co3 = false;
+        return true;
+    }
+    return false;
+}
+
+
+bool bai_xe::chua(int ma_xe) const {
+    if (co1 && pt1.lay_ma_xe() == ma_xe) return true;
+    if (co2 && pt2.lay_ma_xe() == ma_xe) return true;
+    if (co3 && pt3.lay_ma_xe() == ma_xe) return true;
+    return false;
+}
+
+
+void bai_xe::hien_thi() const {
+    int cap = (kich_thuoc == 'S') ? 1 : (kich_thuoc == 'M') ? 2 : 3;
+    int so_xe = co1 + co2 + co3;
+    cout << "Bai " << ma_bai << " [" << kich_thuoc << "] "
+         << so_xe << "/" << cap << " xe\n";
+    if (co1) pt1.hien_thi();
+    if (co2) pt2.hien_thi();
+    if (co3) pt3.hien_thi();
+}
+
+
+bool bai_xe::co_loai(string loai, int& dem, double& tong) const {
+    dem = 0; tong = 0;
+    if (co1 && pt1.lay_loai_xe() == loai) { ++dem; tong += pt1.tinh_phi(); }
+    if (co2 && pt2.lay_loai_xe() == loai) { ++dem; tong += pt2.tinh_phi(); }
+    if (co3 && pt3.lay_loai_xe() == loai) { ++dem; tong += pt3.tinh_phi(); }
+    return dem > 0;
+}
+
+
+class SystemInterface {
+private:
+    bai_xe bai1, bai2, bai3;
+    bool co1, co2, co3; 
+
+public:
+    SystemInterface();
+    void runMenu();
 };
 
-int main() {
-    SystemInterface systemInterface;
-    systemInterface.hienthimenu();
-    return 0;
+SystemInterface::SystemInterface(){
+	co1 = false;
+	co2 = false;
+	co3 = false;
+}
+
+bool trungbai(int mabai){
+			if(co1 && bai1.lay_ma_bai() == mabai) return true;
+			if(co2 && bai2.lay_ma_bai() == mabai) return true;
+			if(co3 && bai3.lay_ma_bai() == mabai) return true;
+			return false;
+		}
+		
+bool trungphuongtien(int mapt){
+		if(co1 && bai1.chua(mapt) == mapt) return true;
+		if(co2 && bai2.chua(mapt) == mapt) return true;
+		if(co3 && bai3.chua(mapt) == mapt) return true;
+		return false;
+	}
+
+
+void SystemInterface::runMenu(){
+	int chon;
+    while (true) {
+        cout << "\n===== QUAN LY BAI DO XE =====\n";
+        cout << "1. Tao bai do\n";
+        cout << "2. Them xe\n";
+        cout << "3. Xoa bai do\n";
+        cout << "4. Lay xe ra\n";
+        cout << "5. Hien thi tat ca bai do\n";
+        cout << "6. Hien thi xe theo bai\n";
+        cout << "7. Liet ke xe theo loai\n";
+        cout << "8. Bao cao phi trung binh\n";
+        cout << "9. Thoat\n";
+        cout << "Chon: ";
+        cin >> chon;
+	}
+	switch(chon){
+		case 1:
+			if(co1 && co2 && co3){
+				cout<<"Da dat gioi han toi da 3 bai xe"<<endl;
+			}
+			int mabai;
+			char kt;
+			cout<<"Moi ban nhap ma bai do: ";
+			cin>>mabai;
+			if(trungbai(mabai)) 
+				cout<<"Trung ma bai do xe, vui long nhap lai"<<endl;
+			
+			cout<<"Moi ban nhap kich thuoc bai: "
+			cin>>kt;
+			kt = toupper(kt);
+			if( kt != 'S' || kt != 'M' || kt != 'L') 
+				cout<<"Kich thuoc bai do khong hop le, vui long nhap lai"<<endl;
+			
+			if(co1 == false){
+				bai1 = bai_xe(mabai, kt)
+				co1 = true;
+			}
+			
+			else if(co2 == false){
+				bai2 = bai_xe(mabai, kt)
+				co2 = true;
+			}
+			
+			else if(co3 == false){
+				bai3 = bai_xe(mabai, kt)
+				co3 = true;
+			}
+			
+			cout<<"Tao bai do thanh cong"<<endl;
+			break;
+		
+		case 2:
+			if(!co1 && !co2 && !co3)
+				cout<<"Chua co bai xe nao, vui long tao bai do"<<endl;
+				
+			int mapt, gio_vao, tg_do;
+	}
 }
