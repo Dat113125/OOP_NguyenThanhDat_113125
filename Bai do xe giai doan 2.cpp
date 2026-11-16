@@ -80,6 +80,7 @@ private:
     static const int xetoida = 3;
     phuong_tien phuongtien[xetoida];
     int demphuongtienhientai;
+    int suc_chua() const;
 
 public:
     bai_xe();
@@ -134,6 +135,10 @@ bool bai_xe::xoa(int ma_xe) {
 	return false;
 }
 
+int bai_xe::suc_chua() const{
+	return (kich_thuoc == 'S') ? 1 : (kich_thuoc == 'M') ? 2 : 3;
+}
+
 
 bool bai_xe::chua(int ma_xe) const {
     for(int i = 0; i < demphuongtienhientai; i++){
@@ -172,6 +177,9 @@ private:
     static const int baitoida = 10;
     bai_xe baixe[baitoida];
     int dembaidohientai;
+    
+    int timbai(int ma) const;
+    int timxe(int ma) const;
 
 public:
     SystemInterface();
@@ -180,6 +188,18 @@ public:
 
 SystemInterface::SystemInterface(){
 	dembaidohientai = 0;
+}
+
+int SystemInterface::timbai(int ma) const{
+	for(int i = 0; i<dembaidohientai; i++)
+		if(baixe[i].lay_ma_bai() == ma) return i;
+	return -1;
+}
+
+int SystemInterface::timxe(int ma) const{
+	for(int i = 0; i<dembaidohientai; i++)
+		if(baixe[i].chua(ma)) return i;
+	return -1;
 }
 
 
@@ -205,14 +225,24 @@ void SystemInterface::runMenu(){
 				int ma; char kt;
 	            if(dembaidohientai >= baitoida){
 	            	cout<<"He thong da dat gioi han"<<endl;
-	            	return;
+	            	break;
 				}
 				cout << "Ma bai: "; cin >> ma;
-	            cout << "Kich thuoc (S/M/L): "; cin >> kt;
-	            for(int i = 0; i<dembaidohientai; i++){
-	            	baixe[dembaidohientai] = bai_xe(ma, kt);
-	            	cout << "Da tao bai " << ma << "\n";
+				
+				if(timbai(ma) != -1){
+					cout<<"Ma bai da ton tai"<<endl;
+					break;
 				}
+	            cout << "Kich thuoc (S/M/L): "; cin >> kt;
+	            kt = (char)toupper((unsigned char) kt);
+	            if(kt!='S' && kt!='M' && kt!='L'){
+	            	cout<<"Kich thuoc khong hop le";
+	            	break;
+				}
+	            	baixe[dembaidohientai] = bai_xe(ma, kt);
+	            	dembaidohientai++;
+	            	cout << "Da tao bai " << ma << "\n";
+	            	break;
 			}
             break;
 		
@@ -227,14 +257,32 @@ void SystemInterface::runMenu(){
 	    		}
 	    		
 	            cout << "Ma xe: "; cin >> ma;
+	            if(timxe(ma) != -1){
+	            	cout<<"Ma xe da ton tai"<<endl;
+					break;
+				}
+				
 	            cout << "Loai (Car/Motorcycle/Bicycle): "; cin >> loai;
+	            loai = chuanhoaten(loai);
+	            
+	            if(loai == ""){
+	            	cout<<"Loai xe khong hop le"<<endl;
+	            	break;
+				}
+				
 	            cout << "Gio vao (0-23): "; cin >> gio;
 	            cout << "Thoi luong (1-23): "; cin >> tg;
+	            if(gio < 0 || gio > 23 || tg < 1 || tg > 23){
+	            	cout<<"Gio vao hoac thoi luong khong hop le"<<endl;
+	            	break;
+				}
 	            phuong_tien phuongtien(ma, loai, gio, tg);
-	            
-	            for(int i = 0; i < demphuongtienhientai; i++){
-	            	baixe[i].them(phuongtien);
-	            	cout<<"Them xe thanh cong"<<endl;
+	            bool ok = false;
+	            for(int i = 0; i < dembaidohientai && !ok; i++){
+	            	ok = baixe[i].them(phuongtien);
+	            	if(ok) cout<<"Da them xe "<<ma<<"| Phi: $"<<fixed<<setprecision(2)<<phuongtien.tinh_phi()<<"\n";
+	            	else cout<<"Tat ca cac bai da day"<<endl;
+	            	break;
 				}
 			}
 			
@@ -244,20 +292,23 @@ void SystemInterface::runMenu(){
 			{
 				int ma;
 	            cout << "Ma bai can xoa: "; cin >> ma;
-	            for(int i = 0; i<dembaidohientai; i++){
-	            	if(baixe[i].lay_ma_bai() == ma ){
-	            		baixe[i] = baixe[i+1];
-	            		dembaidohientai--;
-					}
+	            int vt = timbai(ma);
+	            if(vt == -1){
+	            	cout<<"Khong tim thay bai "<<ma<<"\n";
+	            	break;
 				}
+	            for(int j = vt; j<dembaidohientai-1; j++)
+	            	baixe[j] = baixe[j+1];
+	            dembaidohientai--;
+				cout<<"Da xoa bai "<<ma<<"\n";
+				break;
 			}
-            break;
         case 4:
         	{
 	        	int ma;
 	            cout << "Ma xe can lay ra: "; cin >> ma;
 	            bool ok = false;
-	            for(int i =0; i<dembaidohientai; i++){
+	            for(int i = 0; i<dembaidohientai; i++){
 	            	if(baixe[i].chua(ma)){
 	            		baixe[i].xoa(ma);
 	            		ok = true;
@@ -269,6 +320,8 @@ void SystemInterface::runMenu(){
             break;
         case 5:
         	{
+        		if(dembaidohientai == 0)
+        		cout<<"Chua co bai do nao"<<endl;
 	        	for(int i = 0; i<dembaidohientai; i++){
 	        		baixe[i].hien_thi();
 				}
@@ -279,22 +332,28 @@ void SystemInterface::runMenu(){
         	{
 	        	int ma;
 	            cout << "Ma bai: "; cin >> ma;
-	            for(int i = 0; i<dembaidohientai; i++){
-	            	if(baixe[i].lay_ma_bai() == ma) baixe[i].hien_thi();
-				}
+	            int vt = timbai(ma);
+	            if(vt != -1) baixe[vt].hien_thi();
+	            else cout<<"Khong tim thay bai "<<ma<<endl;
+	            break;
 			}
-        	
             break;
         case 7:
         	{
 	        	string loai;
 	            cout << "Loai xe: "; cin >> loai;
+	            loai = chuanhoaten(loai);
 	            int dem; double tong;
+	            bool timthay = false;
 	            for(int i = 0; i<dembaidohientai; i++){
-	            	if(baixe[i].co_loai(loai, dem, tong)) baixe[i].hien_thi();
+	            	if(baixe[i].co_loai(loai, dem, tong)){
+	            		baixe[i].hien_thi();
+	            		timthay = true;
+					}	
 				}
+				if(!timthay) cout<<"Khong co xe loai "<<loai<<endl;
+				break;
 			}
-        	
             break;
         case 8:
         	{
@@ -318,6 +377,9 @@ void SystemInterface::runMenu(){
             break;
         case 9:
         	cout<<"Dang thoat chuong trinh..."<<endl;
+        	break;
+        default:
+        	cout<<"Lua chon khong hop le"<<endl;
         	break;
 		}
 	}
